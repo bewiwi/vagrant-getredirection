@@ -47,7 +47,7 @@ class DisplayRedirection < Vagrant::Command::Base
                 if is_vm_created?(name)
                   yield name
                 else
-                  puts "[#{name}] - machine not created1"
+                  puts "[#{name}] - machine not created"
                 end
               end
             else
