@@ -5,7 +5,11 @@ Provides information on forwarded port configuration: this tool displays guest/h
 Prerequisite:
 ===================
 
+
 * Vagrant version >= 1.2.2
+```shell
+gem install bundler
+```
 
 Installation
 ===================
@@ -23,7 +27,7 @@ $ gem install bundler
 $ rake -T --trace
 $ rake build --trace
 $ vagrant plugin uninstall vagrant-getredirection
-$ vagrant plugin uninstall pkg/vagrant-getredirection*.gem
+$ vagrant plugin install pkg/vagrant-getredirection*.gem
 $ vagrant plugin list
 ```
 
