@@ -34,9 +34,10 @@ module VagrantGetredirection
     def run(machine)
         instance_id = machine.id
         instance_name = machine.name
-        result=command("#{@vboxcmd} showvminfo #{instance_id} |grep \"^NIC [0-9] Rule\" | sed 's/^.*host port = \\([0-9]*\\).*guest port = \\([0-9]*\\)/\\1 => \\2/g' ")
+        results=command("#{@vboxcmd} showvminfo #{instance_id} |grep \"^NIC [0-9] Rule\" | sed 's/^.*host port = \\([0-9]*\\).*guest port = \\([0-9]*\\)/\\1 => \\2/g' ")
         puts "[#{instance_name}] - Redirect : "
-        puts "#{result}"
+        #puts "#{result}"
+        results.each { |result| puts "#{result}" }
     end
 
     def command(command,options = {})
