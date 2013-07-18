@@ -7,6 +7,7 @@ Prerequisite:
 
 
 * Vagrant version >= 1.2.2
+* 
 ```shell
 gem install bundler
 ```
