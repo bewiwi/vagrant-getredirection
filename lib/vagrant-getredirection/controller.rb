@@ -1,13 +1,11 @@
 require 'pp'
 
-module VagrantGetredirection 
-
+module VagrantGetredirection
   class Controller
-
     def initialize(app, env)
         @app = app
         @env = env
-        @vboxcmd=determine_vboxcmd
+        @vboxcmd = determine_vboxcmd
     end
 
     def determine_vboxcmd
@@ -16,11 +14,12 @@ module VagrantGetredirection
         if ENV.has_key?("VBOX_INSTALL_PATH")
           # The path usually ends with a \ but we make sure here
           path = File.join(ENV["VBOX_INSTALL_PATH"], "VBoxManage.exe")
-          return "\"#{path}\""
+
+          "\"#{path}\""
         end
       else
         # for other platforms assume it is on the PATH
-        return "VBoxManage"
+        'VBoxManage'
       end
     end
 
@@ -31,24 +30,29 @@ module VagrantGetredirection
       false
     end
 
-    def run(machine)
+    def run(machine, redirects)
         instance_id = machine.id
         instance_name = machine.name
-        results=command("#{@vboxcmd} showvminfo #{instance_id} |grep \"^NIC [0-9] Rule\" | sed 's/^.*host port = \\([0-9]*\\).*guest port = \\([0-9]*\\)/\\1 => \\2/g' ")
-        puts "[#{instance_name}] - Redirect : "
-        #puts "#{result}"
-        results.each { |result| puts "#{result}" }
+        redirects[instance_name] = {}
+
+        result=command("#{@vboxcmd} showvminfo #{instance_id}")
+
+        result.each do |line|
+          data = /^NIC [0-9]+ Rule\([0-9]+\):\s*name\s*=\s*(?<name>.*?),.*?host port\s*=\s*(?<hostport>[0-9]+),.*?guest port\s*=\s*(?<guestport>[0-9]+)/.match(line)
+
+          unless data == nil
+            redirects[instance_name][data['guestport']] = data['hostport']
+          end
+        end
     end
 
-    def command(command,options = {})
+    def command(command)
         output=nil
-        result=IO.popen("#{command}") {|f| output=f.readlines}
-        return output
-    end
+        IO.popen("#{command}") do |f|
+          output = f.readlines
+        end
 
-    def is_vm_created?(machine)
-        return !machine.id.nil?
+        output
     end
-
   end
 end
